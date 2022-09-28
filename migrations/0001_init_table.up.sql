@@ -2,7 +2,7 @@ BEGIN;
 
 CREATE TABLE IF NOT EXISTS users (
     id SERIAL primary key,
-    created_at date not null,
+    created_at timestamp with time zone not null,
     email varchar(255) not null unique,
     password varchar(255) not null,
     full_name varchar(255) not null,

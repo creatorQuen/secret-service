@@ -33,8 +33,11 @@ func main() {
 	serviceUser := app.NewUserService(repoUser)
 	handlerUser := handlers.NewUserHandler(serviceUser)
 
+	go app.CreatedTimeCompare(db)
+
 	e := echo.New()
 	e.POST("/add_user", handlerUser.CreateUser)
+
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", config.ListenPort), e))
 }
 

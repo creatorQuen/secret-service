@@ -1,7 +1,5 @@
 package domain
 
-import "time"
-
 type User struct {
 	Id        string
 	Email     string
@@ -10,5 +8,5 @@ type User struct {
 	ShowCount int
 	Secret    string
 	UniqueId  *string
-	CreatedAt time.Time
+	CreatedAt string
 }

@@ -6,6 +6,7 @@ import (
 	"secret-service/domain"
 	"secret-service/dto"
 	"secret-service/infrastructure/repository"
+	"secret-service/lib"
 	"strings"
 	"time"
 )
@@ -43,8 +44,8 @@ func (u *userService) Create(req dto.UserCreateReq) (index int, err error) {
 	}
 
 	user.FullName = req.FullName
-	//user.CreatedAt = time.Now().Format("2006-01-02 15:05:06")
-	user.CreatedAt = time.Now()
+	user.CreatedAt = time.Now().Format(lib.DbTLayout)
+	//user.CreatedAt = time.Now()
 
 	var hasher hasherType
 	pwdHashed, err := hasher.HashPassword(req.Password)

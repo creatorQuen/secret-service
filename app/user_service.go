@@ -20,7 +20,17 @@ func NewUserService(repoUser repository.UserRepo) *userService {
 
 func (u *userService) Create(req dto.UserCreateReq) (index int, err error) {
 	var user domain.User
+
 	user.Email = strings.TrimSpace(strings.ToLower(req.Email))
+	if !isValidEmail(req.Email) {
+		log.Error("not valid email string")
+		return 0, errors.New("not valid email string")
+	}
+
+	if !isValidPassword(req.Password) {
+		log.Error("not valid password")
+		return 0, errors.New("not valid password")
+	}
 
 	dbUser, err := u.repoUser.GetUserByEmail(user.Email)
 	if err != nil {
@@ -28,7 +38,7 @@ func (u *userService) Create(req dto.UserCreateReq) (index int, err error) {
 		return 0, err
 	}
 	if dbUser != nil {
-		log.Error("epoUser.GetUserByEmail: ", errors.New("user already exist"))
+		log.Error("repoUser.GetUserByEmail: ", errors.New("user already exist"))
 		return -1, errors.New("user already exist")
 	}
 

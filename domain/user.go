@@ -7,6 +7,5 @@ type User struct {
 	FullName  string
 	ShowCount int
 	Secret    string
-	UniqueId  *string
 	CreatedAt string
 }

@@ -19,39 +19,39 @@ func NewUserService(repoUser repository.UserRepo) *userService {
 	return &userService{repoUser: repoUser}
 }
 
-func (u *userService) Create(req dto.UserCreateReq) (index int, err error) {
+func (u *userService) Create(req dto.UserCreateReq) (index string, err error) {
 	var user domain.User
 
 	user.Email = strings.TrimSpace(strings.ToLower(req.Email))
 	if !isValidEmail(req.Email) {
 		log.Error("not valid email string")
-		return 0, errors.New("not valid email string")
+		return "", errors.New("not valid email string")
 	}
 
 	if !isValidPassword(req.Password) {
 		log.Error("not valid password")
-		return 0, errors.New("not valid password")
+		return "", errors.New("not valid password")
 	}
 
 	dbUser, err := u.repoUser.GetUserByEmail(user.Email)
 	if err != nil {
 		log.Error("repoUser.GetUserByEmail: ", err)
-		return 0, err
+		return "", err
 	}
 	if dbUser != nil {
 		log.Error("repoUser.GetUserByEmail: ", errors.New("user already exist"))
-		return -1, errors.New("user already exist")
+		return "", errors.New("user already exist")
 	}
 
 	user.FullName = req.FullName
 	user.CreatedAt = time.Now().Format(lib.DbTLayout)
-	//user.CreatedAt = time.Now()
+	user.Id = lib.GetUUID()
 
 	var hasher hasherType
 	pwdHashed, err := hasher.HashPassword(req.Password)
 	if err != nil {
 		log.Error("serviceHash.HashPassword: ", err)
-		return 0, err
+		return "", err
 	}
 	user.Password = pwdHashed
 

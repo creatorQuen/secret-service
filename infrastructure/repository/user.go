@@ -52,9 +52,45 @@ func (u *userRepositoryDB) GetUserByEmail(email string) (*domain.User, error) {
 }
 
 func (u *userRepositoryDB) InsertSecretById(capsule domain.SecretCapsule) error {
-	err := u.db.QueryRow("UPDATE users SET secret = $1 WHERE id = $2;", capsule.Secret, capsule.Id)
+	_, err := u.db.Exec("UPDATE users SET secret = $1 WHERE id = $2;", capsule.Secret, capsule.Id)
 	if err != nil {
-		return err.Err()
+		return err
 	}
 	return nil
+}
+
+func (u *userRepositoryDB) SelectSecretAndAddCountById(id string) (string, error) {
+	tx, err := u.db.Begin()
+	if err != nil {
+		return "", err
+	}
+	defer tx.Rollback()
+
+	var secret string
+	query := `SELECT secret FROM users WHERE id=$1`
+	err = u.db.QueryRow(query, id).Scan(&secret)
+	if err != nil {
+		return "", err
+	}
+
+	_, err = u.db.Exec("UPDATE users SET show_count = show_count + 1 WHERE id = $1;", id)
+	if err != nil {
+		return "", err
+	}
+
+	if err = tx.Commit(); err != nil {
+		return "", err
+	}
+
+	return secret, nil
+}
+
+func (u *userRepositoryDB) GetShowCountById(id string) (int, error) {
+	var showCount int
+	query := `SELECT show_count FROM users WHERE id=$1`
+	err := u.db.QueryRow(query, id).Scan(&showCount)
+	if err != nil {
+		return -1, err
+	}
+	return showCount, nil
 }

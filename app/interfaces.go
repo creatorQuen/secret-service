@@ -12,4 +12,5 @@ type Hasher interface {
 
 type SecretService interface {
 	PutSecret(req dto.SecretPutReq) error
+	GetSecret(id string) (string, error)
 }

@@ -30,5 +30,5 @@ func (u *userHandler) CreateUser(ctx echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	return echo.NewHTTPError(http.StatusCreated, id)
+	return ctx.JSON(http.StatusCreated, id)
 }

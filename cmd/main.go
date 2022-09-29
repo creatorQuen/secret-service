@@ -42,6 +42,7 @@ func main() {
 	e := echo.New()
 	e.POST("/add_user", handlerUser.CreateUser)
 	e.POST("/secret", handlerSecret.CreateSecret)
+	e.GET("/secret/:id", handlerSecret.GetSecretById)
 
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", config.ListenPort), e))
 }

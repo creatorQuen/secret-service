@@ -36,5 +36,21 @@ func (s *secretHandler) CreateSecret(ctx echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	return echo.NewHTTPError(http.StatusCreated)
+	return ctx.NoContent(http.StatusCreated)
+}
+
+func (s *secretHandler) GetSecretById(ctx echo.Context) error {
+	id := ctx.Param("id")
+	if id == "" {
+		log.Error(lib.ErrEmptyParameter)
+		return echo.NewHTTPError(http.StatusBadRequest, lib.ErrEmptyParameter)
+	}
+
+	secret, err := s.secretService.GetSecret(id)
+	if err != nil {
+		log.Error("secretService.GetSecret: ", err.Error())
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+
+	return ctx.JSON(http.StatusOK, secret)
 }

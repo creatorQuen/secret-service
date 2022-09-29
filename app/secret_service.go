@@ -6,6 +6,7 @@ import (
 	"secret-service/domain"
 	"secret-service/dto"
 	"secret-service/infrastructure/repository"
+	"secret-service/lib"
 )
 
 type secretService struct {
@@ -29,4 +30,26 @@ func (s *secretService) PutSecret(req dto.SecretPutReq) error {
 	}
 
 	return nil
+}
+
+func (s *secretService) GetSecret(id string) (string, error) {
+	showCount, err := s.repoUser.GetShowCountById(id)
+	if err != nil {
+		return "", err
+	}
+	if showCount >= lib.ShowCount {
+		return "", lib.ErrDontShowCount
+	}
+
+	secretHash, err := s.repoUser.SelectSecretAndAddCountById(id)
+	if err != nil {
+		return "", err
+	}
+
+	secret, err := base64.StdEncoding.DecodeString(secretHash)
+	if err != nil {
+		return "", err
+	}
+
+	return string(secret), nil
 }

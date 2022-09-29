@@ -16,7 +16,7 @@ func NewUserHandler(userService app.UserService) *userHandler {
 	return &userHandler{userService: userService}
 }
 
-func (b *userHandler) CreateUser(ctx echo.Context) error {
+func (u *userHandler) CreateUser(ctx echo.Context) error {
 	var req dto.UserCreateReq
 	err := ctx.Bind(&req)
 	if err != nil {
@@ -24,9 +24,9 @@ func (b *userHandler) CreateUser(ctx echo.Context) error {
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 
-	id, err := b.userService.Create(req)
+	id, err := u.userService.Create(req)
 	if err != nil {
-		log.Println("Error userService.Create: ", err.Error())
+		log.Println("userService.Create: ", err.Error())
 		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
 	}
 

@@ -3,7 +3,7 @@ package repository
 import (
 	"database/sql"
 	"errors"
-	"log"
+	"github.com/labstack/gommon/log"
 	"secret-service/domain"
 )
 
@@ -44,9 +44,17 @@ func (u *userRepositoryDB) GetUserByEmail(email string) (*domain.User, error) {
 		if err == sql.ErrNoRows {
 			return nil, nil
 		} else {
-			log.Println("Error while scanning book " + err.Error())
+			log.Error("Error while scanning book " + err.Error())
 			return nil, errors.New("Unexpected database error")
 		}
 	}
 	return &user, nil
+}
+
+func (u *userRepositoryDB) InsertSecretById(capsule domain.SecretCapsule) error {
+	err := u.db.QueryRow("UPDATE users SET secret = $1 WHERE id = $2;", capsule.Secret, capsule.Id)
+	if err != nil {
+		return err.Err()
+	}
+	return nil
 }

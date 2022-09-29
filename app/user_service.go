@@ -24,13 +24,13 @@ func (u *userService) Create(req dto.UserCreateReq) (index string, err error) {
 
 	user.Email = strings.TrimSpace(strings.ToLower(req.Email))
 	if !isValidEmail(req.Email) {
-		log.Error("not valid email string")
-		return "", errors.New("not valid email string")
+		log.Error(lib.ErrNotValidEmail)
+		return "", lib.ErrNotValidEmail
 	}
 
 	if !isValidPassword(req.Password) {
-		log.Error("not valid password")
-		return "", errors.New("not valid password")
+		log.Error(lib.ErrNotValidPassword)
+		return "", lib.ErrNotValidPassword
 	}
 
 	dbUser, err := u.repoUser.GetUserByEmail(user.Email)

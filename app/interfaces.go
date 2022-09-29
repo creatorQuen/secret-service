@@ -9,3 +9,7 @@ type UserService interface {
 type Hasher interface {
 	HashPassword(password string) (string, error)
 }
+
+type SecretService interface {
+	PutSecret(req dto.SecretPutReq) error
+}

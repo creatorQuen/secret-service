@@ -30,13 +30,18 @@ func main() {
 
 	db := connectDB(&config)
 	repoUser := repository.NewUserRepositoryDb(db)
+
 	serviceUser := app.NewUserService(repoUser)
+	secretService := app.NewSecretService(repoUser)
+
 	handlerUser := handlers.NewUserHandler(serviceUser)
+	handlerSecret := handlers.NewSecretHandler(secretService)
 
 	go app.CreatedTimeCompare(db)
 
 	e := echo.New()
 	e.POST("/add_user", handlerUser.CreateUser)
+	e.POST("/secret", handlerSecret.CreateSecret)
 
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", config.ListenPort), e))
 }
@@ -55,7 +60,6 @@ func connectDB(conf *config.Config) (db *sql.DB) {
 	return
 }
 
-//func migrateDB(dsn string) {
 func migrateDB(conf *config.Config) {
 	databaseURL := fmt.Sprintf("postgresql://%s:%s@%s:%s/%s?sslmode=require",
 		conf.ConfigDataBase.User,

@@ -7,6 +7,7 @@ import (
 	"secret-service/dto"
 	"secret-service/infrastructure/repository"
 	"secret-service/lib"
+	"unicode/utf8"
 )
 
 type secretService struct {
@@ -18,6 +19,10 @@ func NewSecretService(repoUser repository.UserRepo) *secretService {
 }
 
 func (s *secretService) PutSecret(req dto.SecretPutReq) error {
+	if utf8.RuneCountInString(req.Secret) > lib.MaxLengthSecret {
+		return lib.ErrMaxLengthString
+	}
+
 	var capsule domain.SecretCapsule
 	capsule.Id = req.Id
 	secretHash := base64.StdEncoding.EncodeToString([]byte(req.Secret))

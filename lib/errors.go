@@ -1,6 +1,9 @@
 package lib
 
-import "errors"
+import (
+	"errors"
+	"strconv"
+)
 
 var (
 	ErrSecretIsEmpty    = errors.New("secret is empty")
@@ -8,4 +11,5 @@ var (
 	ErrNotValidEmail    = errors.New("not valid email string")
 	ErrDontShowCount    = errors.New("you can't watch the secret anymore")
 	ErrEmptyParameter   = errors.New("empty parameter")
+	ErrMaxLengthString  = errors.New("max string length is " + strconv.Itoa(MaxLengthSecret) + " symbols")
 )
